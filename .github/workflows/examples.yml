@@ -98,3 +98,6 @@ jobs:
 
     - name: strings example
       run: cd pgx-examples/strings && CARGO_TARGET_DIR=~/.cargo/cargo-pgx cargo pgx test pg${{ matrix.version }}
+
+    - name: triggers example
+      run: cd pgx-examples/triggers && CARGO_TARGET_DIR=~/.cargo/cargo-pgx cargo pgx test pg${{ matrix.version }}
