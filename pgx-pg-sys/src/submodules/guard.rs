@@ -74,11 +74,22 @@ pub fn register_pg_guard_panic_handler() {
     #[cfg(debug_assertions)]
     {
         if IS_MAIN_THREAD.with(|v| v.get().is_some()) {
-            panic!("IS_MAIN_THREAD has already been set")
+            eprintln!("IS_MAIN_THREAD has already been set");
+            return
         }
 
         // it's expected that this function will only ever be called by `pg_module_magic!()` by the main thread
         IS_MAIN_THREAD.with(|v| v.set(()).expect("failed to set main thread sentinel"));
+    }
+
+    // If we're forwarding rust-alloc to palloc, we need to ensure we're in a
+    // long-lived memory context
+    let prev_context;
+
+    // mimic what palloc.h does for switching memory contexts
+    unsafe {
+        prev_context = crate::CurrentMemoryContext;
+        crate::CurrentMemoryContext = crate::TopMemoryContext;
     }
 
     std::panic::set_hook(Box::new(|info| {
@@ -113,7 +124,12 @@ pub fn register_pg_guard_panic_handler() {
                 existing
             })
         });
-    }))
+    }));
+
+    // restore our understanding of the current memory context
+    unsafe {
+        crate::CurrentMemoryContext = prev_context;
+    }
 }
 
 /// A `std::result::Result`-type value returned from `pg_try()` that allows for performing cleanup
@@ -130,7 +146,7 @@ impl<T> PgTryResult<T> {
     /// ## Safety
     ///
     /// This function is unsafe because you might be ignoring a caught Postgres ERROR (or Rust panic)
-    /// and you better know what you're doing when you do that.  
+    /// and you better know what you're doing when you do that.
     ///
     /// Doing so can potentially leave Postgres in an undefined state and ultimately cause it
     /// to crash.
