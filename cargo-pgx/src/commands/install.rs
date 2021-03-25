@@ -102,7 +102,6 @@ fn build_extension(major_version: u16, is_release: bool, additional_features: &[
     if !features.trim().is_empty() {
         command.arg("--features");
         command.arg(&features);
-        command.arg("--no-default-features");
     }
 
     for arg in flags.split_ascii_whitespace() {

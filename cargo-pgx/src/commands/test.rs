@@ -23,10 +23,8 @@ pub fn test_extension(
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .arg("test")
-        .arg("--all")
         .arg("--features")
         .arg(features)
-        .arg("--no-default-features")
         .env("CARGO_TARGET_DIR", &target_dir)
         .env(
             "PGX_BUILD_PROFILE",
