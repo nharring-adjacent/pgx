@@ -60,13 +60,34 @@ pub struct JsonType {
     c: i64,
 }
 
+macro_rules! create_type {
+    (struct $name:ident { $($f:ident: $t:ty),* $(,)? }) => {
+        #[derive(Serialize, Deserialize, PostgresType)]
+        pub struct $name {
+            $(
+                $f: $t
+            ),*
+        }
+    };
+}
+
+create_type!{
+    struct CustomVarlenaType {
+        a: f32,
+        b: f32,
+        c: i64,
+    }
+}
+
+varlena_type!(CustomVarlenaType);
+
 #[cfg(any(test, feature = "pg_test"))]
 mod tests {
     #[allow(unused_imports)]
     use crate as pgx_tests;
 
     use crate::tests::postgres_type_tests::{
-        CustomTextFormatSerializedType, JsonType, VarlenaType,
+        CustomTextFormatSerializedType, JsonType, VarlenaType, CustomVarlenaType,
     };
     use pgx::*;
 
@@ -97,5 +118,14 @@ mod tests {
         assert_eq!(result.a, 1.0);
         assert_eq!(result.b, 2.0);
         assert_eq!(result.c, 3);
+    }
+
+    #[pg_test]
+    fn test_customvarlenatype() {
+        let result = Spi::get_one::<CustomVarlenaType>(r#"SELECT '{"a": 2.0, "b": 3.0, "c": 4}'::CustomVarlenaType"#)
+            .expect("SPI returned NULL");
+        assert_eq!(result.a, 2.0);
+        assert_eq!(result.b, 3.0);
+        assert_eq!(result.c, 4);
     }
 }
