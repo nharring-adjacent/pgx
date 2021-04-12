@@ -516,6 +516,12 @@ pub fn extension_sql(input: TokenStream) -> TokenStream {
     }
 }
 
+#[proc_macro]
+pub fn varlena_type(input: TokenStream) -> TokenStream {
+    let _ = parse_macro_input!(input as syn::Ident);
+    TokenStream::new()
+}
+
 #[proc_macro_derive(PostgresEq)]
 pub fn postgres_eq(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as syn::DeriveInput);

@@ -497,6 +497,31 @@ fn walk_items(
 
                 // and remember this sql block
                 sql.push(string.to_string());
+            } else if name.ends_with("varlena_type") {
+                let string = makro.mac.tokens.to_string();
+                let name = string.trim().to_lowercase();
+
+                postgres_types.push(format!(
+                    "CREATE TYPE {};",
+                    qualify_name(&current_schema, &name)
+                ));
+                postgres_types.push(
+                    format!("CREATE OR REPLACE FUNCTION {qualified_name}_in(cstring) RETURNS {qualified_name} IMMUTABLE STRICT PARALLEL SAFE LANGUAGE C AS 'MODULE_PATHNAME', '{name}_in_wrapper';",
+                    qualified_name = qualify_name(&current_schema, &name), name = name)
+                );
+                postgres_types.push(
+                    format!("CREATE OR REPLACE FUNCTION {qualified_name}_out({qualified_name}) RETURNS cstring IMMUTABLE STRICT PARALLEL SAFE LANGUAGE C AS 'MODULE_PATHNAME', '{name}_out_wrapper';", qualified_name = qualify_name(&current_schema, &name),
+                    name = name)
+                );
+                postgres_types.push(format!(
+                    "CREATE TYPE {qualified_name} (
+                                INTERNALLENGTH = variable,
+                                INPUT = {qualified_name}_in,
+                                OUTPUT = {qualified_name}_out,
+                                STORAGE = extended
+                            );",
+                    qualified_name = qualify_name(&current_schema, &name)
+                ));
             }
         } else if let Item::Fn(func) = item {
             let attributes = collect_attributes(rs_file, &func.sig.ident, &func.attrs);
