@@ -59,10 +59,7 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     }
 
     let manifest_dir = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap());
-    let out_dir = PathBuf::from(format!(
-        "{}/src/",
-        std::env::var("CARGO_MANIFEST_DIR").unwrap()
-    ));
+    let out_dir = PathBuf::from(std::env::var("OUT_DIR").unwrap());
     let shim_dir = PathBuf::from(format!("{}/cshim", manifest_dir.display()));
 
     eprintln!("manifest_dir={}", manifest_dir.display());

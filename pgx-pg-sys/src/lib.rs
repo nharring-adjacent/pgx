@@ -29,13 +29,21 @@ pub use submodules::*;
 
 // feature gate each pg version module
 #[cfg(feature = "pg10")]
-mod pg10;
+mod pg10 {
+    include!(concat!(env!("OUT_DIR"), "/pg10.rs"));
+}
 #[cfg(feature = "pg11")]
-mod pg11;
+mod pg11{
+    include!(concat!(env!("OUT_DIR"), "/pg11.rs"));
+}
 #[cfg(feature = "pg12")]
-mod pg12;
+mod pg12 {
+    include!(concat!(env!("OUT_DIR"), "/pg12.rs"));
+}
 #[cfg(feature = "pg13")]
-mod pg13;
+mod pg13 {
+    include!(concat!(env!("OUT_DIR"), "/pg13.rs"));
+}
 
 // export each module publicly
 #[cfg(feature = "pg10")]
@@ -49,13 +57,21 @@ pub use pg13::*;
 
 // feature gate each pg-specific oid module
 #[cfg(feature = "pg10")]
-mod pg10_oids;
+mod pg10_oids {
+    include!(concat!(env!("OUT_DIR"), "/pg10_oids.rs"));
+}
 #[cfg(feature = "pg11")]
-mod pg11_oids;
+mod pg11_oids {
+    include!(concat!(env!("OUT_DIR"), "/pg11_oids.rs"));
+}
 #[cfg(feature = "pg12")]
-mod pg12_oids;
+mod pg12_oids {
+    include!(concat!(env!("OUT_DIR"), "/pg12_oids.rs"));
+}
 #[cfg(feature = "pg13")]
-mod pg13_oids;
+mod pg13_oids {
+    include!(concat!(env!("OUT_DIR"), "/pg13_oids.rs"));
+}
 
 // export that module publicly
 #[cfg(feature = "pg10")]

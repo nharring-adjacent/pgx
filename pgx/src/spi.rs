@@ -255,7 +255,7 @@ impl Spi {
             }
 
             // closure returned an error
-            Err(e) => panic!(e),
+            Err(e) => std::panic::panic_any(e),
         }
     }
 
@@ -269,7 +269,7 @@ impl Spi {
         } else {
             let status_enum = SpiError::from_i32(-status_code);
             match status_enum {
-                Some(e) => panic!(e),
+                Some(e) => std::panic::panic_any(e),
                 None => panic!("unrecognized SPI status code {}", status_code),
             }
         }
@@ -481,7 +481,7 @@ impl SpiHeapTupleData {
         data
     }
 
-    /// Get a typed Datum value from this HeapTuple by its ordinal position.  
+    /// Get a typed Datum value from this HeapTuple by its ordinal position.
     ///
     /// The ordinal position is 1-based
     #[deprecated(since = "0.1.6", note = "Please use the `by_ordinal` function instead")]
@@ -492,7 +492,7 @@ impl SpiHeapTupleData {
         }
     }
 
-    /// Get a typed Datum value from this HeapTuple by its ordinal position.  
+    /// Get a typed Datum value from this HeapTuple by its ordinal position.
     ///
     /// The ordinal position is 1-based.
     ///
@@ -507,7 +507,7 @@ impl SpiHeapTupleData {
         }
     }
 
-    /// Get a typed Datum value from this HeapTuple by its field name.  
+    /// Get a typed Datum value from this HeapTuple by its field name.
     ///
     /// If the specified name does not exist a `Err(SpiError::Noattribute)` is returned
     pub fn by_name(&self, name: &str) -> std::result::Result<&SpiHeapTupleDataEntry, SpiError> {
@@ -522,7 +522,7 @@ impl SpiHeapTupleData {
         }
     }
 
-    /// Get a mutable typed Datum value from this HeapTuple by its ordinal position.  
+    /// Get a mutable typed Datum value from this HeapTuple by its ordinal position.
     ///
     /// The ordinal position is 1-based.
     ///
@@ -537,7 +537,7 @@ impl SpiHeapTupleData {
         }
     }
 
-    /// Get a mutable typed Datum value from this HeapTuple by its field name.  
+    /// Get a mutable typed Datum value from this HeapTuple by its field name.
     ///
     /// If the specified name does not exist a `Err(SpiError::Noattribute)` is returned
     pub fn by_name_mut(
@@ -628,7 +628,7 @@ impl Index<usize> for SpiHeapTupleData {
     }
 }
 
-/// Provide named indexing into a `SpiHeapTupleData`.  
+/// Provide named indexing into a `SpiHeapTupleData`.
 ///
 /// If the field name doesn't exist, it will panic
 impl Index<&str> for SpiHeapTupleData {
@@ -639,7 +639,7 @@ impl Index<&str> for SpiHeapTupleData {
     }
 }
 
-/// Provide mutable ordinal indexing into a `SpiHeapTupleData`.  
+/// Provide mutable ordinal indexing into a `SpiHeapTupleData`.
 ///
 /// If the index is out of bounds, it will panic
 impl IndexMut<usize> for SpiHeapTupleData {
@@ -648,7 +648,7 @@ impl IndexMut<usize> for SpiHeapTupleData {
     }
 }
 
-/// Provide mutable named indexing into a `SpiHeapTupleData`.  
+/// Provide mutable named indexing into a `SpiHeapTupleData`.
 ///
 /// If the field name doesn't exist, it will panic
 impl IndexMut<&str> for SpiHeapTupleData {
