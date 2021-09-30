@@ -245,7 +245,7 @@ pub struct Pgx {
 }
 
 use crate::{BASE_POSTGRES_PORT_NO, BASE_POSTGRES_TESTING_PORT_NO};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use syn::export::Formatter;
 
