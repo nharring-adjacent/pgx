@@ -66,7 +66,7 @@ impl BackgroundWorker {
         const LEN: usize = 96;
 
         unsafe {
-            CStr::from_ptr(std::mem::transmute::<&[i8; LEN], *const i8>(
+            CStr::from_ptr(std::mem::transmute::<&[i8; LEN], *const ::std::os::raw::c_char>(
                 &(*pg_sys::MyBgworkerEntry).bgw_name,
             ))
         }
@@ -79,7 +79,7 @@ impl BackgroundWorker {
         const LEN: usize = 128;
 
         unsafe {
-            CStr::from_ptr(std::mem::transmute::<&[i8; LEN], *const i8>(
+            CStr::from_ptr(std::mem::transmute::<&[i8; LEN], *const ::std::os::raw::c_char>(
                 &(*pg_sys::MyBgworkerEntry).bgw_extra,
             ))
         }
@@ -129,7 +129,7 @@ impl BackgroundWorker {
 
         unsafe {
             #[cfg(feature = "pg10")]
-            pg_sys::BackgroundWorkerInitializeConnection(db as *mut i8, user as *mut i8);
+            pg_sys::BackgroundWorkerInitializeConnection(db as *mut ::std::os::raw::c_char, user as *mut ::std::os::raw::c_char);
 
             #[cfg(any(feature = "pg11", feature = "pg12", feature = "pg13"))]
             pg_sys::BackgroundWorkerInitializeConnection(db, user, 0);
