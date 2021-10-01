@@ -66,7 +66,7 @@ impl BackgroundWorker {
         const LEN: usize = 96;
 
         unsafe {
-            CStr::from_ptr(std::mem::transmute::<&[i8; LEN], *const ::std::os::raw::c_char>(
+            CStr::from_ptr(std::mem::transmute::<&[::std::os::raw::c_char; LEN], *const ::std::os::raw::c_char>(
                 &(*pg_sys::MyBgworkerEntry).bgw_name,
             ))
         }
@@ -79,7 +79,7 @@ impl BackgroundWorker {
         const LEN: usize = 128;
 
         unsafe {
-            CStr::from_ptr(std::mem::transmute::<&[i8; LEN], *const ::std::os::raw::c_char>(
+            CStr::from_ptr(std::mem::transmute::<&[::std::os::raw::c_char; LEN], *const ::std::os::raw::c_char>(
                 &(*pg_sys::MyBgworkerEntry).bgw_extra,
             ))
         }
@@ -122,10 +122,10 @@ impl BackgroundWorker {
     /// connect to via SPI
     pub fn connect_worker_to_spi(dbname: Option<&str>, username: Option<&str>) {
         let db = dbname.and_then(|rs| CString::new(rs).ok());
-        let db: *const i8 = db.as_ref().map_or(std::ptr::null(), |i| i.as_ptr());
+        let db: *const ::std::os::raw::c_char = db.as_ref().map_or(std::ptr::null(), |i| i.as_ptr());
 
         let user = username.and_then(|rs| CString::new(rs).ok());
-        let user: *const i8 = user.as_ref().map_or(std::ptr::null(), |i| i.as_ptr());
+        let user: *const ::std::os::raw::c_char = user.as_ref().map_or(std::ptr::null(), |i| i.as_ptr());
 
         unsafe {
             #[cfg(feature = "pg10")]
@@ -440,13 +440,13 @@ type RpgffiChar = RpgffiChar64;
 #[cfg(any(feature = "pg11", feature = "pg12", feature = "pg13"))]
 type RpgffiChar = RpgffiChar96;
 
-struct RpgffiChar64([i8; 64]);
+struct RpgffiChar64([::std::os::raw::c_char; 64]);
 
 impl<'a> From<&'a str> for RpgffiChar64 {
     fn from(string: &str) -> Self {
         let mut r = [0; 64];
         for (dest, src) in r.iter_mut().zip(string.as_bytes()) {
-            *dest = *src as i8;
+            *dest = *src as ::std::os::raw::c_char;
         }
         RpgffiChar64(r)
     }
@@ -458,7 +458,7 @@ impl<'a> From<&'a str> for RpgffiChar96 {
     fn from(string: &str) -> Self {
         let mut r = [0; 96];
         for (dest, src) in r.iter_mut().zip(string.as_bytes()) {
-            *dest = *src as i8;
+            *dest = *src as ::std::os::raw::c_char;
         }
         RpgffiChar96(r)
     }
@@ -470,7 +470,7 @@ impl<'a> From<&'a str> for RpgffiChar128 {
     fn from(string: &str) -> Self {
         let mut r = [0; 128];
         for (dest, src) in r.iter_mut().zip(string.as_bytes()) {
-            *dest = *src as i8;
+            *dest = *src as ::std::os::raw::c_char;
         }
         RpgffiChar128(r)
     }
